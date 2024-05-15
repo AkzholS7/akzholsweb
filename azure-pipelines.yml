@@ -3,7 +3,7 @@ variables:
   aksClusterName: aks-pvaks-cac-001a
   azureResourceGroup: akzhols-rg-tfstate
   azureSubscriptionEndpoint: service-connection
-  repository: akzholsweb
+  repository: nginx:latest
 
 stages:
   - stage: Deploy

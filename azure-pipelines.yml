@@ -1,19 +1,44 @@
 variables:
-  acrName: acrpvakscac1akzhol7
+  dockerHubServiceConnection: dockerHubConnection
+  dockerHubRepository: suborov/myapp
   aksClusterName: aks-pvaks-cac-001a
-  azureResourceGroup: akzhols-rg-tfstate
+  azureResourceGroup: rg-tfstate-akzhol
   azureSubscriptionEndpoint: service-connection
-  repository: nginx:latest
+
 
 stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        pool: aks-private
+        steps:
+          - task: Docker@2
+            displayName: Build and Push Docker Image
+            inputs:
+              containerRegistry: $(dockerHubServiceConnection)
+              repository: $(dockerHubRepository)
+              command: buildAndPush
+              Dockerfile: $(Build.Repository.LocalPath)/Dockerfile
+              tags: |
+                $(Build.BuildId)
+
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: $(Build.Repository.LocalPath)
+              contents: "deployment.yml"
+              targetFolder: $(Build.ArtifactStagingDirectory)
+              overwrite: true
+
+          - publish: $(Build.ArtifactStagingDirectory)
+            artifact: $(dockerHubRepository)
   - stage: Deploy
     jobs:
       - job: Deploy
         pool: aks-private
         steps:
-          - download: current
-            artifact: $(repository)
-            displayName: Download artifact
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              artifactName: $(dockerHubRepository)
 
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: "Replace tokens"
@@ -28,7 +53,7 @@ stages:
               tokenSuffix: __
 
           - task: Kubernetes@1
-            displayName: "Apply Kubernetes Configuration"
+            displayName: "kubectl"
             inputs:
               connectionType: Azure Resource Manager
               azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
@@ -36,4 +61,4 @@ stages:
               kubernetesCluster: $(aksClusterName)
               command: apply
               useConfigurationFile: true
-              configuration: $(Pipeline.Workspace)\$(repository)\deployment.yml
+              configuration: $(Pipeline.Workspace)\$(dockerHubRepository)\deployment.yml

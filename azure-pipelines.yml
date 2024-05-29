@@ -16,8 +16,8 @@ stages:
             displayName: Build and Push Docker Image
             inputs:
               containerRegistry: $(dockerHubServiceConnection)
-              repository: $(dockerHubRepository)
-              command: buildAndPush
+              command: 'login'
+              arguments: '-u suborov -p J7GnxG8f*nSNncL'
               Dockerfile: $(Build.Repository.LocalPath)/Dockerfile
               tags: |
                 $(Build.BuildId)

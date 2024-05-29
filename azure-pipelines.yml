@@ -1,8 +1,6 @@
 variables:
   dockerHubServiceConnection: dockerHubConnection
-  dockerHubRepository: suborov/myapp
-  dockerHubImage: suborov_myapp
-
+  dockerHubRepository: suborov_myapp
   aksClusterName: aks-pvaks-cac-001a
   azureResourceGroup: rg-tfstate-akzhol
   azureSubscriptionEndpoint: service-connection
@@ -18,7 +16,7 @@ stages:
             displayName: Build and Push Docker Image
             inputs:
               containerRegistry: $(dockerHubServiceConnection)
-              repository: $(dockerHubImage)
+              repository: $(dockerHubRepository)
               command: 'login'
               arguments: '-u suborov -p J7GnxG8f*nSNncL'
               Dockerfile: $(Build.Repository.LocalPath)/Dockerfile
@@ -33,7 +31,7 @@ stages:
               overwrite: true
 
           - publish: $(Build.ArtifactStagingDirectory)
-            artifact: $(dockerHubImage)
+            artifact: $(dockerHubRepository)
   - stage: Deploy
     jobs:
       - job: Deploy
@@ -41,14 +39,14 @@ stages:
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:
-              artifactName: $(dockerHubImage)
+              artifactName: $(dockerHubRepository)
 
           - task: qetza.replacetokens.replacetokens-task.replacetokens@3
             displayName: "Replace tokens"
             inputs:
-              rootDirectory: $(Pipeline.Workspace)\$(dockerHubRepository)
+              rootDirectory: $(Pipeline.Workspace)
               targetFiles: |
-                deployment.yml
+                $(dockerHubRepository)/deployment.yml  
               encoding: auto
               writeBOM: true
               escapeType: no escaping

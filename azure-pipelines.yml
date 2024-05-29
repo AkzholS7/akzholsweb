@@ -1,6 +1,6 @@
 variables:
   dockerHubServiceConnection: dockerHubConnection
-  dockerHubRepository: suborov_myapp
+  dockerHubRepository: myapp
   aksClusterName: aks-pvaks-cac-001a
   azureResourceGroup: rg-tfstate-akzhol
   azureSubscriptionEndpoint: service-connection

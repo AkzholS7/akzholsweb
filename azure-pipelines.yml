@@ -34,8 +34,17 @@ stages:
             artifact: $(dockerHubRepository)
   - stage: Deploy
     jobs:
-      - job: Deploy
+      - job: DeployIngressController
         pool: aks-private
+        steps:
+          - script: |
+              kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+            displayName: "kubectl apply NGINX Ingress Controller"
+            workingDirectory: $(Pipeline.Workspace)
+
+      - job: DeployApplication
+        pool: aks-private
+        dependsOn: DeployIngressController
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:
@@ -54,7 +63,7 @@ stages:
               tokenSuffix: __
 
           - task: Kubernetes@1
-            displayName: "kubectl"
+            displayName: "kubectl apply deployment"
             inputs:
               connectionType: Azure Resource Manager
               azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)

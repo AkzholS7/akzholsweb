@@ -36,6 +36,7 @@ stages:
     jobs:
       - job: DeployIngressController
         pool: aks-private
+        timeoutInMinutes: 30
         steps:
           - script: |
               kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml

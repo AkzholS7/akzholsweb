@@ -34,23 +34,8 @@ stages:
             artifact: $(dockerHubRepository)
   - stage: Deploy
     jobs:
-      - job: DeployIngressController
-        pool: aks-private
-        steps:
-          - task: Kubernetes@1
-            displayName: "kubectl apply NGINX Ingress Controller"
-            inputs:
-              connectionType: Azure Resource Manager
-              azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-              azureResourceGroup: $(azureResourceGroup)
-              kubernetesCluster: $(aksClusterName)
-              command: apply
-              useConfigurationFile: false
-              arguments: '-f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml'
-
       - job: DeployApplication
         pool: aks-private
-        dependsOn: DeployIngressController
         steps:
           - task: DownloadBuildArtifacts@0
             inputs:

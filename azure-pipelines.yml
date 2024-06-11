@@ -1,9 +1,9 @@
 variables:
-  dockerHubServiceConnection: dockerHubConnection
+  dockerHubServiceConnection: dockerHubConnection2
   dockerHubRepository: myapp
-  aksClusterName: aks-pvaks-cac-001a
-  azureResourceGroup: rg-tfstate-akzhol
-  azureSubscriptionEndpoint: service-connection
+  aksClusterName: aks-pvaks-cac-001aa
+  azureResourceGroup: rg-tfstate-akzhols
+  azureSubscriptionEndpoint: service-connection2
 
 
 stages:

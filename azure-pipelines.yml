@@ -1,7 +1,7 @@
 variables:
   dockerHubServiceConnection: dockerHubConnection2
   dockerHubRepository: myapp
-  aksClusterName: aks-pvaks-cac-001aa
+  aksClusterName: aks-pvaks-cac-001a
   azureResourceGroup: rg-tfstate-akzhols
   azureSubscriptionEndpoint: service-connection2
 
